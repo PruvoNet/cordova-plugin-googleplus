@@ -52,13 +52,23 @@
     NSString *clientId = [self reverseUrlScheme:reversedClientId];
     NSString* serverClientId = options[@"webClientId"];
     NSString* hostedDomain = options[@"hostedDomain"];
+    NSString* scopesString = options[@"scopes"] ?: @"profile email";
+    NSArray* scopesArray = [scopesString componentsSeparatedByString:@" "];
 
     GIDConfiguration *config = [[GIDConfiguration alloc] initWithClientID:clientId serverClientID:serverClientId hostedDomain:hostedDomain openIDRealm:nil];
 
     GIDSignIn *signIn = [GIDSignIn sharedInstance];
+    GIDSignIn *addScopes = [GIDSignIn sharedInstance];
 
     [signIn signInWithConfiguration:config presentingViewController:self.viewController callback:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
+      if (error) {
         [self handleSignInCompleteWithUser:user error:error];
+        return;
+      }
+
+      [addScopes scopes:scopes presentingViewController:self.viewController callback:^(GIDGoogleUser * _Nullable userScopes, NSError * _Nullable errorScopes) {
+        [self handleSignInCompleteWithUser:userScopes error:errorScopes];
+      }];
     }];
 }
 
