@@ -54,7 +54,7 @@
     NSString* hostedDomain = options[@"hostedDomain"];
     BOOL hasAdditionalScopes = options[@"scopes"] != nil;
 
-    NSString* scopesString = hasAdditionalScopes ?: @"profile email";
+    NSString* scopesString = hasAdditionalScopes ? options[@"scopes"] : @"profile email";
     NSArray* scopesArray = [scopesString componentsSeparatedByString:@" "];
 
     GIDConfiguration *config = [[GIDConfiguration alloc] initWithClientID:clientId serverClientID:serverClientId hostedDomain:hostedDomain openIDRealm:nil];
