@@ -61,7 +61,7 @@
 
     GIDSignIn *signIn = [GIDSignIn sharedInstance];
 
-    [signIn signInWithConfiguration:config presentingViewController:self.viewController hint:nil additionalScopes:scopesArraycallback:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
+    [signIn signInWithConfiguration:config presentingViewController:self.viewController hint:nil additionalScopes:scopesArray callback:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
       NSLog(@"User %@", user);
       if ([user respondsToSelector:@selector(grantedScopes)]) {
           NSLog(@"User2 %@", user.grantedScopes);
@@ -73,7 +73,7 @@
           }
       } 
 
-      [self handleSignInCompleteWithUser:userScopes error:errorScopes];
+      [self handleSignInCompleteWithUser:user error:error];
 
 
       // Doesn't have additional scopes, don't prompt for additional scopes
