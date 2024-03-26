@@ -62,29 +62,7 @@
     GIDSignIn *signIn = [GIDSignIn sharedInstance];
 
     [signIn signInWithConfiguration:config presentingViewController:self.viewController hint:nil additionalScopes:scopesArray callback:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
-      NSLog(@"User %@", user);
-      if ([user respondsToSelector:@selector(grantedScopes)]) {
-          NSLog(@"User2 %@", user.grantedScopes);
-          NSString *targetString = @"https://www.googleapis.com/auth/gmail.readonly";
-          if ([user.grantedScopes containsObject:targetString]) {
-            NSLog(@"ALREADY HAS MAIL SCOPE");
-            [self handleSignInCompleteWithUser:user error:error];
-            return;
-          }
-      } 
-
       [self handleSignInCompleteWithUser:user error:error];
-
-
-      // Doesn't have additional scopes, don't prompt for additional scopes
-      // if (!hasAdditionalScopes || error) {
-      //   [self handleSignInCompleteWithUser:user error:error];
-      //   return;
-      // }
-
-      // [signIn addScopes:scopesArray presentingViewController:self.viewController callback:^(GIDGoogleUser * _Nullable userScopes, NSError * _Nullable errorScopes) {
-      //   [self handleSignInCompleteWithUser:userScopes error:errorScopes];
-      // }];
     }];
 }
 
