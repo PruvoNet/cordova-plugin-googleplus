@@ -61,7 +61,7 @@
 
     GIDSignIn *signIn = [GIDSignIn sharedInstance];
 
-    [signIn signInWithConfiguration:config presentingViewController:self.viewController callback:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
+    [signIn signInWithConfiguration:config presentingViewController:self.viewController hint:nil additionalScopes:scopesArraycallback:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
       NSLog(@"User %@", user);
       if ([user respondsToSelector:@selector(grantedScopes)]) {
           NSLog(@"User2 %@", user.grantedScopes);
@@ -73,15 +73,18 @@
           }
       } 
 
-      // Doesn't have additional scopes, don't prompt for additional scopes
-      if (!hasAdditionalScopes || error) {
-        [self handleSignInCompleteWithUser:user error:error];
-        return;
-      }
+      [self handleSignInCompleteWithUser:userScopes error:errorScopes];
 
-      [signIn addScopes:scopesArray presentingViewController:self.viewController callback:^(GIDGoogleUser * _Nullable userScopes, NSError * _Nullable errorScopes) {
-        [self handleSignInCompleteWithUser:userScopes error:errorScopes];
-      }];
+
+      // Doesn't have additional scopes, don't prompt for additional scopes
+      // if (!hasAdditionalScopes || error) {
+      //   [self handleSignInCompleteWithUser:user error:error];
+      //   return;
+      // }
+
+      // [signIn addScopes:scopesArray presentingViewController:self.viewController callback:^(GIDGoogleUser * _Nullable userScopes, NSError * _Nullable errorScopes) {
+      //   [self handleSignInCompleteWithUser:userScopes error:errorScopes];
+      // }];
     }];
 }
 
