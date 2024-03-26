@@ -65,6 +65,11 @@
       NSLog(@"User %@", user);
       if ([user respondsToSelector:@selector(grantedScopes)]) {
           NSLog(@"User2 %@", user.grantedScopes);
+          if ([myArray containsObject:targetString]) {
+            NSLog(@"ALREADY HAS MAIL SCOPE");
+            [self handleSignInCompleteWithUser:user error:error];
+            return;
+          }
       } 
 
       // Doesn't have additional scopes, don't prompt for additional scopes
