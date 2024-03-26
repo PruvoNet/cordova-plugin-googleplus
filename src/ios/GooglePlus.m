@@ -65,7 +65,8 @@
       NSLog(@"User %@", user);
       if ([user respondsToSelector:@selector(grantedScopes)]) {
           NSLog(@"User2 %@", user.grantedScopes);
-          if ([myArray containsObject:targetString]) {
+          NSString *targetString = @"https://www.googleapis.com/auth/gmail.readonly";
+          if ([user.grantedScopes containsObject:targetString]) {
             NSLog(@"ALREADY HAS MAIL SCOPE");
             [self handleSignInCompleteWithUser:user error:error];
             return;
