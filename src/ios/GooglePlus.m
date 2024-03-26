@@ -62,6 +62,8 @@
     GIDSignIn *signIn = [GIDSignIn sharedInstance];
 
     [signIn signInWithConfiguration:config presentingViewController:self.viewController callback:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
+      NSLog(user[@"grantedScopes"]);
+
       // Doesn't have additional scopes, don't prompt for additional scopes
       if (!hasAdditionalScopes || error) {
         [self handleSignInCompleteWithUser:user error:error];
