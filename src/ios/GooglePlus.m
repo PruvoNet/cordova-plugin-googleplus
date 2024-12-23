@@ -62,22 +62,16 @@
     GIDSignIn *signIn = [GIDSignIn sharedInstance];
     signIn.configuration = config;
 
-    [signIn signInWithPresentingViewController:self.viewController hint:nil completion:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
-        if (user && hasAdditionalScopes) {
-            [user addScopes:scopesArray presentingViewController:self.viewController completion:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
-                [self handleSignInCompleteWithUser:user error:error];
-            }];
-        } else {
-            [self handleSignInCompleteWithUser:user error:error];
-        }
+    [signIn signInWithPresentingViewController:self.viewController hint:nil additionalScopes:scopesArray completion:^(GIDSignInResult * _Nullable signInResult, NSError * _Nullable error) {
+        [self handleSignInCompleteWithUser:signInResult.user error:error];
     }];
 }
 
 - (void) trySilentLogin:(CDVInvokedUrlCommand*)command {
     _callbackId = command.callbackId;
     GIDSignIn *signIn = [GIDSignIn sharedInstance];
-    [signIn restorePreviousSignInWithCallback:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
-        [self handleSignInCompleteWithUser:user error:error];
+    [signIn restorePreviousSignInWithCompletion:^(GIDSignInResult * _Nullable signInResult, NSError * _Nullable error) {
+        [self handleSignInCompleteWithUser:signInResult.user error:error];
     }];
 }
 
@@ -91,7 +85,7 @@
         NSString *accessToken = user.accessToken.tokenString;
         NSString *refreshToken = user.refreshToken.tokenString;
         NSString *userId = user.userID;
-        NSString *serverAuthCode = user.serverAuthCode != nil ? user.serverAuthCode : @"";
+        NSString *serverAuthCode = user.serverAuthCode.length > 0 ? user.serverAuthCode : @"";
         NSURL *imageUrl = [user.profile imageURLWithDimension:120]; // TODO pass in img size as param, and try to sync with Android
         NSDictionary *result = @{
                        @"email"           : email,
@@ -143,7 +137,7 @@
 
 - (void) disconnect:(CDVInvokedUrlCommand*)command {
     GIDSignIn *signIn = [GIDSignIn sharedInstance];
-    [signIn disconnectWithCallback:^(NSError * _Nullable error) {
+    [signIn disconnectWithCompletion:^(NSError * _Nullable error) {
         CDVPluginResult * pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"disconnected"];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
