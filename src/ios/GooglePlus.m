@@ -64,8 +64,10 @@
 
     [signIn signInWithPresentingViewController:self.viewController hint:nil additionalScopes:scopesArray completion:^(GIDSignInResult * _Nullable signInResult, NSError * _Nullable error) {
         if (signInResult && signInResult.serverAuthCode) {
-            // Store server auth code if available
             self.serverAuthCode = signInResult.serverAuthCode;
+        }
+        else {
+            self.serverAuthCode = @"";
         }
         [self handleSignInCompleteWithUser:signInResult.user error:error];
     }];
