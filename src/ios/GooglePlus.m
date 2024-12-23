@@ -70,8 +70,8 @@
 - (void) trySilentLogin:(CDVInvokedUrlCommand*)command {
     _callbackId = command.callbackId;
     GIDSignIn *signIn = [GIDSignIn sharedInstance];
-    [signIn restorePreviousSignInWithCompletion:^(GIDSignInResult * _Nullable signInResult, NSError * _Nullable error) {
-        [self handleSignInCompleteWithUser:signInResult.user error:error];
+    [signIn restorePreviousSignInWithCompletion:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
+        [self handleSignInCompleteWithUser:user error:error];
     }];
 }
 
@@ -85,7 +85,7 @@
         NSString *accessToken = user.accessToken.tokenString;
         NSString *refreshToken = user.refreshToken.tokenString;
         NSString *userId = user.userID;
-        NSString *serverAuthCode = user.serverAuthCode.length > 0 ? user.serverAuthCode : @"";
+        NSString *serverAuthCode = user.serverAuthCode != nil ? user.serverAuthCode : @"";
         NSURL *imageUrl = [user.profile imageURLWithDimension:120]; // TODO pass in img size as param, and try to sync with Android
         NSDictionary *result = @{
                        @"email"           : email,
