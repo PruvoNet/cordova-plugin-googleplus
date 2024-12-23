@@ -60,9 +60,16 @@
     GIDConfiguration *config = [[GIDConfiguration alloc] initWithClientID:clientId serverClientID:serverClientId hostedDomain:hostedDomain openIDRealm:nil];
 
     GIDSignIn *signIn = [GIDSignIn sharedInstance];
+    signIn.configuration = config;
 
-    [signIn signInWithConfiguration:config presentingViewController:self.viewController hint:nil additionalScopes:scopesArray callback:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
-      [self handleSignInCompleteWithUser:user error:error];
+    [signIn signInWithPresentingViewController:self.viewController hint:nil completion:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
+        if (user && hasAdditionalScopes) {
+            [user addScopes:scopesArray presentingViewController:self.viewController completion:^(GIDGoogleUser * _Nullable user, NSError * _Nullable error) {
+                [self handleSignInCompleteWithUser:user error:error];
+            }];
+        } else {
+            [self handleSignInCompleteWithUser:user error:error];
+        }
     }];
 }
 
@@ -80,9 +87,9 @@
         [self.commandDelegate sendPluginResult:pluginResult callbackId:_callbackId];
     } else {
         NSString *email = user.profile.email;
-        NSString *idToken = user.authentication.idToken;
-        NSString *accessToken = user.authentication.accessToken;
-        NSString *refreshToken = user.authentication.refreshToken;
+        NSString *idToken = user.idToken.tokenString;
+        NSString *accessToken = user.accessToken.tokenString;
+        NSString *refreshToken = user.refreshToken.tokenString;
         NSString *userId = user.userID;
         NSString *serverAuthCode = user.serverAuthCode != nil ? user.serverAuthCode : @"";
         NSURL *imageUrl = [user.profile imageURLWithDimension:120]; // TODO pass in img size as param, and try to sync with Android
