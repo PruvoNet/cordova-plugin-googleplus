@@ -63,6 +63,10 @@
     signIn.configuration = config;
 
     [signIn signInWithPresentingViewController:self.viewController hint:nil additionalScopes:scopesArray completion:^(GIDSignInResult * _Nullable signInResult, NSError * _Nullable error) {
+        if (signInResult && signInResult.serverAuthCode) {
+            // Store server auth code if available
+            self.serverAuthCode = signInResult.serverAuthCode;
+        }
         [self handleSignInCompleteWithUser:signInResult.user error:error];
     }];
 }
@@ -85,7 +89,7 @@
         NSString *accessToken = user.accessToken.tokenString;
         NSString *refreshToken = user.refreshToken.tokenString;
         NSString *userId = user.userID;
-        NSString *serverAuthCode = user.serverAuthCode != nil ? user.serverAuthCode : @"";
+        NSString *serverAuthCode = self.serverAuthCode ? self.serverAuthCode : @"";
         NSURL *imageUrl = [user.profile imageURLWithDimension:120]; // TODO pass in img size as param, and try to sync with Android
         NSDictionary *result = @{
                        @"email"           : email,
